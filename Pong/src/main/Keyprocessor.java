@@ -1,0 +1,39 @@
+package main;
+
+import java.awt.event.KeyEvent;
+
+public class Keyprocessor {
+	private Player a;
+	public Keyprocessor(Player p){
+		a = p;
+	}
+    public void keyPressed(KeyEvent e) {
+        int key = e.getKeyCode();
+        if (key == KeyEvent.VK_UP) {
+            a.uppress();
+        }
+        if (key == KeyEvent.VK_DOWN) {
+        	a.downpress();
+        }
+    }
+    public void keyReleased(KeyEvent e) {
+        int key = e.getKeyCode();
+
+        if (key == KeyEvent.VK_UP) {
+        	a.uprel();
+        }
+
+        if (key == KeyEvent.VK_DOWN) {
+        	a.downrel();
+        }
+        if (key == KeyEvent.VK_ENTER) {
+        	Board.setmenuactive(false);
+        }
+        if (key == KeyEvent.VK_P) {
+        	if (Board.getpause())
+        		Board.setpause(false);
+        	else
+        		Board.setpause(true);        		
+        }
+    }
+}

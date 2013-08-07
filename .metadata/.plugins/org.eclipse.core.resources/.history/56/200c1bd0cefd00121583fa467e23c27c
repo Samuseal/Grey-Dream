@@ -1,0 +1,112 @@
+package main;
+
+import java.awt.Image;
+import java.awt.Rectangle;
+
+import javax.swing.ImageIcon;
+
+public class PartShipBody {
+    private String craft1 = "../Ship Body.png";
+    private int x;
+    private int y;
+    private int width;
+    private int height;
+    private boolean visible;
+    private double dir;
+    private Image image;
+    private boolean leftpressed;
+    private boolean rightpressed;
+    private boolean moving;
+    private boolean thrusting;
+    private double degdir;
+    private int speed;
+    private final int maxspeed = 2;
+    public PartShipBody(int x, int y, double direction) {
+        ImageIcon ii = new ImageIcon(this.getClass().getResource(craft1));
+    	image = ii.getImage();    
+        width = image.getWidth(null);
+        height = image.getHeight(null);
+        visible = true;
+        this.x = x;
+        this.y = y;
+        dir = direction;
+    }
+    public Image getimage(){
+    	return image;
+    }
+    public void move(){
+    	if ((speed > 0))
+    		moving = true;
+    	else 
+    		moving = false;
+    	if (leftpressed){
+    		dir = dir - 0.01;
+    		if (dir<0)
+    			dir+=2*Math.PI;
+    	}
+    	if (rightpressed)
+    		dir = dir + 0.01;
+    	if (thrusting){
+    		if (speed<maxspeed){
+    			speed = speed +1;
+    			}
+    		}else{
+    			if (speed>0)
+    				speed = speed - 1;
+    		}
+    		
+    		
+    	if (moving)
+    		degdir = (dir/180)*(2*Math.PI);
+    		x=(int) (x+(speed*Math.sin(degdir)));
+    		y=(int) (y+(speed*Math.cos(degdir)));
+    }
+    public int getX() {
+        return x;
+    }
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, width, height);
+    }
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
+    }
+    public void leftpressed()
+    {
+    	leftpressed=true;
+    }
+    public void uppressed()
+    {
+    	thrusting=true;
+    }
+    public void upreleased()
+    {
+    	thrusting=true;
+    }
+    public int getmidx(){
+        return x+(width/2);
+    }
+    public int getmidy(){
+        return y+(height/2);
+    }
+    
+    public void leftreleased()
+    {
+    	leftpressed=false;
+    }
+    public void rightpressed()
+    {
+    	rightpressed=true;
+    }
+    public void rightreleased()
+    {
+    	rightpressed=false;    
+    }
+
+    public int getY() {
+        return y;
+    }
+    public double getdir(){
+    	return dir;
+    }
+
+}

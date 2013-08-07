@@ -1,0 +1,66 @@
+package main;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import java.math.*;
+public class Board extends JPanel implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3249716937809828864L;
+    private Object pos[][] = new Object[15][15];
+    private int i,j;
+    private double r;
+	public Board(){
+		for (int i=0; i < 15; i++)
+			   for (int j=0; j < 15; j++){
+				  r=0;
+				  if ((r==1)){
+					  pos[i][j] = new Sea(i,j);
+			      } else {
+					  pos[i][j]= new Land(i,j);
+				  }
+				  }
+	}
+	public void paint(Graphics g) {
+        Graphics2D g2d = (Graphics2D)g;
+		for (int i=0;i<pos.length;i++){
+			for (int f=0;f<pos[i].length;f++){ 
+				if (pos[i][f] instanceof Sea){
+					Sea s = (Sea)pos[i][f];
+	                g2d.drawImage(s.getImage(), s.getX()*45, s.getY()*45, this);
+				}
+				else if(pos[i][f] instanceof Land){
+					Land s = (Land)pos[i][f];
+	                g2d.drawImage(s.getImage(), s.getX()*45, s.getY()*45, this);
+	            }
+				else{
+					
+				}
+				
+			}
+		}
+		
+	}
+	public int randomh(int low,int high){
+		int newrandom;
+		double x;
+		x = (Math.random()*(high-1))+low;
+		newrandom = (int)x;
+		return newrandom;
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		repaint(); 
+	}
+
+}

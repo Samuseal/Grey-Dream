@@ -1,0 +1,100 @@
+package main;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import java.math.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+public class Board extends JPanel implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3249716937809828864L;
+    private Object pos[][] = new Object[15][15];
+    private int i,j;
+    private double r;
+    private int camtopx,camtopy;
+	public Board(){
+		for (int i=0; i < 15; i++)
+			   for (int j=0; j < 15; j++){
+				  r=randomh(1,40);
+				  if (!(r==1)){
+					  pos[i][j] = new Sea(i,j);
+			      } else {
+					  pos[i][j]= new Land(i,j);
+				  }
+				  }
+		for (int i=0; i < 15; i++)
+			   for (int j=0; j < 15; j++){
+				   if (pos[i][j] instanceof Sea){
+					   if ((i>1) && (i<14) && (j>1) && (j<14)){
+						   if (pos[i+1][j] instanceof Land){
+							   pos[i][j]= new Land(i,j);
+						   }
+						   if (pos[i-1][j] instanceof Land){
+							   pos[i][j]= new Land(i,j);
+						   }
+						   if (pos[i][j+1] instanceof Land){
+							   pos[i][j]= new Land(i,j);
+						   }
+						   if (pos[i][j-1] instanceof Land){
+							   pos[i][j]= new Land(i,j);
+						   }
+					   }
+				   }
+			   }
+		camtopx = 0;
+		camtopy = 0;
+	}
+	public void paint(Graphics g) {
+        Graphics2D g2d = (Graphics2D)g;
+		for (int i=0;i<pos.length;i++){
+			for (int f=0;f<pos[i].length;f++){ 
+				if (pos[i][f] instanceof Sea){
+					Sea s = (Sea)pos[i][f];
+	                g2d.drawImage(s.getImage(), (s.getX()*45)+camtopx, (s.getY()*45)+camtopy, this);
+				}
+				else if(pos[i][f] instanceof Land){
+					Land s = (Land)pos[i][f];
+	                g2d.drawImage(s.getImage(), s.getX()*45, s.getY()*45, this);
+	            }
+				else{
+					
+				}
+				
+			}
+		}
+		
+	}
+	public int randomh(int low,int high){
+		int newrandom;
+		double x;
+		x = (Math.random()*(high-1))+low;
+		newrandom = (int)x;
+		return newrandom;
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		repaint(); 
+	}
+    private class TAdapter extends KeyAdapter {
+
+        public void keyReleased(KeyEvent e) {
+            craft.keyReleased(e);
+        }
+
+        public void keyPressed(KeyEvent e) {
+            craft.keyPressed(e);
+        }
+    }
+
+}

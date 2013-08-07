@@ -1,0 +1,61 @@
+package main;
+
+import java.awt.Image;
+import java.awt.Rectangle;
+
+import javax.swing.ImageIcon;
+
+public class PartShipEngine {
+    private String craft1 = "../Ship Guns 1.png";
+    private double x;
+    private double y;
+    private int width;
+    private int height;
+    private boolean visible;
+    private double dir;
+    private PartShipBody ship;
+    private Image image;
+    private int lengthfrom;
+    public PartShipEngine(int x, int y, double direction,PartShipBody shipbody) {
+        ImageIcon ii = new ImageIcon(this.getClass().getResource(craft1));
+    	image = ii.getImage();    
+    	lengthfrom = (int) (Math.random()*(40-1))-20;
+        width = image.getWidth(null);
+        height = image.getHeight(null);
+        visible = true;
+        this.x = x-(width*2);
+        this.y = y;
+        dir = direction;
+        ship=shipbody;
+    }
+    public Image getimage(){
+    	return image;
+    }
+    public void move(){
+    	x=ship.getmidx()-(width/2);
+    	y=ship.getmidy();
+    	dir=ship.getdir();
+    }
+    public double getX() {
+        return x;
+    }
+    public Rectangle getBounds() {
+        return new Rectangle((int) x,(int) y, width, height);
+    }
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
+    }
+    public int getmidx(){
+        return(int)  x+(width/2);
+    }
+    public int getmidy(){
+        return(int)  y+(height/2);
+    }
+    public double getY() {
+        return y;
+    }
+    public double getdir(){
+    	return dir;
+    }
+
+}

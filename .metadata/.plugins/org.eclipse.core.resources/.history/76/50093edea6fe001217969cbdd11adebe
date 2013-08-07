@@ -1,0 +1,73 @@
+package main;
+
+import java.awt.Image;
+import java.awt.Rectangle;
+
+import javax.swing.ImageIcon;
+public class Planet {
+private String craft1 = "../planetimg.png";
+private double x;
+private double y;
+private int width;
+private int height;
+private boolean visible;
+private boolean onscreen;
+private Image image;
+public Planet(double x, double y) {
+    ImageIcon ii = new ImageIcon(this.getClass().getResource(craft1));
+	image = ii.getImage();
+    width = image.getWidth(null);
+    height = image.getHeight(null);
+    visible = true;
+    this.x = x;
+    this.y = y;
+	x=(Math.random()*2000)-1000+Board.getcx()+(Board.Screensizeh/2);
+	y=(Math.random()*2000)-1000+Board.getcy()+(Board.Screensizev/2);
+}
+
+
+public void move() {
+	if ((x>Board.getcx())&&(y>Board.getcy())&&(x<Board.getcx()+Board.Screensizeh)&&(y<Board.getcy()+Board.Screensizev)){
+		onscreen=true;
+	} else {
+		onscreen = false;
+	}
+	if (!onscreen){
+		x=(Math.random()*2000)-1000+Board.getcx()+(Board.Screensizeh/2);
+		y=(Math.random()*2000)-1000+Board.getcy()+(Board.Screensizev/2);
+	}
+}
+
+public double getX() {
+    return x;
+}
+public boolean getonscreen() {
+    return onscreen;
+}
+
+public double getY() {
+    return y;
+}
+public void starx(double xadd){
+	x+=xadd;
+}
+public void stary(double yadd){
+	y+=yadd;
+}
+
+public boolean isVisible() {
+    return visible;
+}
+
+public void setVisible(Boolean visible) {
+    this.visible = visible;
+}
+
+public Image getImage() {
+    return image;
+}
+
+public Rectangle getBounds() {
+    return new Rectangle((int)x,(int)y, width, height);
+}
+}

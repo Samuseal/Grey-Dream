@@ -1,0 +1,146 @@
+package main;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+
+import javax.swing.JPanel;
+import javax.swing.Timer;
+public class Board extends JPanel implements ActionListener { 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8692123294390921211L;
+	private Timer timer;
+	public static boolean INV_Screen_Shown;
+	public Keyhandler keyhandler;
+	public PartShipBody shipbody;
+	public PartShipGun shipgun;
+	public PartShipEngine shipengine;
+	public boolean loaded;
+	public static boolean paused;
+	public final int Blocksize=45;
+	public int Screensizeh;  
+	public int Screensizev;
+	public static double camx;
+	public static double camy;
+    private ArrayList<Star> stars;
+    private ArrayList<ParticleSmoke> smokelist;
+	public Board(){
+        setFocusable(true);
+        setBackground(Color.BLACK);
+        setDoubleBuffered(true);
+        addKeyListener(new TAdapter());
+        initStars();
+        initSmoke();
+        INV_Screen_Shown = true;
+        invbutrel();
+        Toolkit tk = Toolkit.getDefaultToolkit(); 
+    	Screensizeh= ((int) tk.getScreenSize().getWidth());  
+    	Screensizev = ((int) tk.getScreenSize().getHeight());
+        shipbody = new PartShipBody(Screensizeh/2-50,(Screensizev/2)-70,2*Math.PI);
+        shipgun = new PartShipGun(100,100,2*Math.PI,shipbody);
+        shipengine = new PartShipEngine(100,100,2*Math.PI,shipbody);
+        keyhandler = new Keyhandler(shipbody);
+        timer = new Timer(5, this);
+        timer.start();
+	}
+    public void initSmoke() {
+    	smokelist = new ArrayList<ParticleSmoke>();
+
+        for (int i=0; i<10; i++ ) {
+            smokelist.add(new ParticleSmoke(Math.random()*Screensizeh, Math.random()*Screensizev));
+        }
+    }
+    
+    public void initStars() {
+        stars = new ArrayList<Star>();
+
+        for (int i=0; i<10; i++ ) {
+        	stars.add(new Star(Math.random()*Screensizeh, Math.random()*Screensizev));
+        }
+    }
+@Override
+public void actionPerformed(ActionEvent e) {
+	// TODO Auto-generated method stub
+	repaint();
+	if (!paused){
+		if (!INV_Screen_Shown){
+			shipbody.move();
+			shipgun.move();
+			shipengine.move();
+		}
+	}
+}
+public static boolean getpause(){
+	return paused;
+}
+public static void setpause(Boolean as){
+	paused = as; 
+}
+public static void invbutrel(){
+	INV_Screen_Shown = !INV_Screen_Shown;
+}
+public static void setcx(double d){
+	camx=d;
+}
+public static void setcy(double y){
+	camy=y;
+}
+public static double getcx(){
+	return camx;
+}
+public static double getcy(){
+	return camy;	
+}
+public void paint(Graphics g){
+    super.paint(g);
+    Graphics2D g2d = (Graphics2D)g;
+    g.setColor(Color.black);
+	if (INV_Screen_Shown){
+        setBackground(Color.WHITE);
+		for (int x=1;x*Blocksize<Screensizeh;x++)
+			g.drawLine(Blocksize*x,0,Blocksize*x,Screensizev);
+		for (int x=1;x*Blocksize<Screensizev;x++)
+			g.drawLine(0,Blocksize*x,Screensizeh,Blocksize*x);
+	}
+	else{
+        setBackground(Color.BLACK);
+		g2d.setColor(Color.WHITE);
+        g2d.drawString("Dir: "+shipbody.getdir(), 5, 15);
+        g2d.drawString("Gun Lengthfrom: "+shipgun.getlengthfrom(), 5, 30);
+        g2d.drawString("Engine Lengthfrom: "+shipengine.getlengthfrom(), 5, 45);
+        g2d.drawString("Ship X Position: "+camx, 5, 60);
+        g2d.drawString("Ship Y Position: "+camy, 5, 75);
+        g2d.drawString("Ship Speed: "+shipbody.getspeed(), 5, 90);
+		g2d.rotate(shipbody.getdir(), shipbody.getmidx(), shipbody.getmidy());
+		g.drawImage(shipbody.getimage(), (int) shipbody.getX(),(int) shipbody.getY(), this);
+		g2d.rotate(-shipbody.getdir(), shipbody.getmidx(), shipbody.getmidy());
+		g2d.rotate(shipgun.getdir(),(int)  shipbody.getmidx(),(int)  shipbody.getmidy());
+		g.drawImage(shipgun.getimage(), (int) shipgun.getX(),(int) shipgun.getY(), this);
+		g.drawImage(shipengine.getimage(), (int) shipengine.getX(),(int) shipengine.getY(), this);
+		g2d.rotate(-shipgun.getdir(),(int)  shipbody.getmidx(),(int)  shipbody.getmidy());
+        for (int i=1; i<10; i++ ) {
+        	Star a = stars.get(i);
+        	g.drawImage(a.getImage(),(int)a.getX(),(int)a.getY(),this);
+            g2d.drawString("Star Pos X "+a.getX(), 300, i*15);
+        }
+	}
+}
+private class TAdapter extends KeyAdapter {
+
+    public void keyReleased(KeyEvent e) {
+    	keyhandler.keyReleased(e);
+    }
+
+    public void keyPressed(KeyEvent e) {
+    	keyhandler.keyPressed(e);
+    }
+}
+}

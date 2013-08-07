@@ -1,0 +1,28 @@
+package main;
+import java.awt.event.KeyEvent;
+
+public class Keyhandler {
+
+	public Keyhandler(){
+
+	}
+    public void keyPressed(KeyEvent e) {
+        int key = e.getKeyCode();
+        if (key == KeyEvent.VK_I) {
+            
+        }
+    }
+    public void keyReleased(KeyEvent e) {
+        int key = e.getKeyCode();
+
+        if (key == KeyEvent.VK_I) {
+        	Board.invbutrel();
+        }
+        if (key == KeyEvent.VK_P) {
+        	if (Board.getpause())
+        		Board.setpause(false);
+        	else
+        		Board.setpause(true);        		
+        }
+    }
+}
