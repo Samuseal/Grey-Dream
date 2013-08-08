@@ -372,10 +372,9 @@ public void paint(Graphics g){
 	}
     Toolkit.getDefaultToolkit().sync();
     g.dispose();
-    g2d.dispose();
 }
 
-
+}
 public void collisionchecker(){
 	Rectangle r1 = shipbody.getBounds();
 	Boolean collide;

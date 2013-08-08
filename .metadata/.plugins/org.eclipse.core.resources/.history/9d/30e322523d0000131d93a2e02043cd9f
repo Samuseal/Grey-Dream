@@ -56,6 +56,7 @@ public void move(){
 	y=gun.getmidy()-100;
 	if (visible)
 		heat+=4;
+		playSound("Laser Shot.wav");
 	if (heat > 1000){
 		reload=true;
 		reloadcounter=1;

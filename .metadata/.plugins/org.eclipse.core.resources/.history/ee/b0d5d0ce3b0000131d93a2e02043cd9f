@@ -184,7 +184,7 @@ public class Board extends JPanel implements ActionListener {
     	String line;
     	try {
 			while ((line = br.readLine()) != null) { // try to read the line. if its not null, read the line and add 1 to the line number
-	        	planets.add(new Planet(Math.random()*35000-17500, Math.random()*35000-17500,line));
+	        	planets.add(new Planet(Math.random()*25000-25000, Math.random()*25000-25000,line));
 			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -372,10 +372,7 @@ public void paint(Graphics g){
 	}
     Toolkit.getDefaultToolkit().sync();
     g.dispose();
-    g2d.dispose();
 }
-
-
 public void collisionchecker(){
 	Rectangle r1 = shipbody.getBounds();
 	Boolean collide;
@@ -406,11 +403,10 @@ public void collisionchecker(){
 						newquest();
 					}
 				}
+			} else if (quest == quests.Coord){
+				
 			} else if (quest == quests.Letter){
-				if (a.getrandom() == 1 || a.getrandom() == 9){
-					points++;
-					newquest();
-				}
+				
 			}
 		}
 	}
