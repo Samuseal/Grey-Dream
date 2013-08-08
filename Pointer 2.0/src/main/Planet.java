@@ -26,7 +26,10 @@ public Planet(double x, double y, String namer) {
     String input = namer;
     name = input.substring(0, 1).toUpperCase() + input.substring(1);
 }
-
+public void move(){
+	y=Math.random()*25000-25000;
+	x=Math.random()*25000-25000;
+}
 public double getX() {
     return x;
 }
@@ -40,6 +43,9 @@ public double getY() {
 public boolean isVisible() {
     return visible;
 }
+public int getrandom(){
+	return random;
+}
 
 public void setVisible(Boolean visible) {
     this.visible = visible;
@@ -50,6 +56,6 @@ public Image getImage() {
 }
 
 public Rectangle getBounds() {
-    return new Rectangle((int)x,(int)y, width, height);
+    return new Rectangle((int)x-(int)Board.camx,(int)y-(int)Board.camy, width, height);
 }
 }

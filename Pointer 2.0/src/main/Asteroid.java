@@ -36,7 +36,7 @@ public double getY() {
     return y;
 }
 public void explode(){
-	
+	visible = false;
 }
 public boolean isVisible() {
     return visible;

@@ -1,0 +1,134 @@
+package main;
+
+import java.awt.Image;
+import java.awt.Rectangle;
+import javax.swing.Timer;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
+import javax.swing.ImageIcon;
+public class Laser {
+private String craft1 = "../Weapon";
+private double x;
+private int random;
+private double y;
+private int width;
+private int height;
+private PartShipBody ship;
+private PartShipGun gun;
+private boolean visible;
+private Image image;
+private int heat;
+private boolean reload;
+private int reloadcounter;
+private static Timer timer;
+public Laser(double x, double y,PartShipBody shipbody, PartShipGun shipgun) {
+	random = (int) (Math.random()*3+1);
+    ImageIcon ii = new ImageIcon(this.getClass().getResource(craft1+random+".png"));
+
+	image = ii.getImage();
+    width = image.getWidth(null);
+    height = image.getHeight(null);
+    visible = false;
+    this.x = x;
+    this.y = y;
+    ship=shipbody;
+    gun=shipgun;
+    reloadcounter =0;
+}
+
+public double getX() {
+    return x;
+}
+
+public double getY() {
+    return y;
+}
+public void starx(double xadd){
+	x+=xadd;
+}
+public void stary(double yadd){
+	y+=yadd;
+}
+public void move(){
+	x=gun.getmidx()-(width/2)-10;
+	y=gun.getmidy()-100;
+	if (visible)
+		heat+=4;
+		playSound("Laser Shot.wav");
+	if (heat > 1000){
+		reload=true;
+		reloadcounter=1;
+		visible = false;
+		heat = 999;
+	}
+  	if (reload){
+      		reloadcounter+=1;
+		if (reloadcounter>1000){
+			reload=false;
+			reloadcounter=0;
+			heat = 1;
+		}
+	} else if (!visible){
+		if (heat>0){
+			heat-=2;}
+	}
+			
+}
+public boolean isVisible() {
+    return visible;
+}
+public int getreload(){
+	return reloadcounter;
+}
+public int getheat(){
+	return heat;
+}
+public boolean getreloading(){
+	return reload;
+}
+public void setVisible(boolean vis){
+	if (!reload)
+		visible = vis;
+}
+public void regen(){
+	random = (int) (Math.random()*3+1);
+    ImageIcon ii = new ImageIcon(this.getClass().getResource(craft1+random+".png"));
+	image = ii.getImage();
+}
+public void setVisible(Boolean visible) {
+    this.visible = visible;
+}
+
+public Image getImage() {
+    return image;
+}
+public Rectangle getBounds() {
+    return new Rectangle((int)x,(int)y, width, 2000);
+}
+public synchronized void playSound(final String url) {
+
+	timer = new Timer(1, null);
+	  new Thread(new Runnable() {
+		  
+	    public void run() {
+	      try {
+	        Clip clip = AudioSystem.getClip();
+	        AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+	          Main.class.getResourceAsStream("../" + url));
+	        clip.open(inputStream);
+	        FloatControl gainControl = 
+	        	    (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+	        	gainControl.setValue(-20.0f); // Reduce volume by 20 decibels.
+	        if(visible)
+	        {
+	        clip.start();
+	        }
+	      } catch (Exception e) {
+	        System.err.println(e.getMessage());
+	      }
+	    }
+	  }).start();
+	}
+}

@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,6 +13,7 @@ import java.awt.event.KeyAdapter; // Get keyboard events
 import java.awt.event.KeyEvent; // Get keyboard info
 import java.awt.event.MouseEvent; // Get mouse events
 import java.awt.event.MouseListener; // Get mouse info
+import java.awt.geom.Line2D;
 import java.awt.MouseInfo;    // get mouse x and y
 import java.io.*;
 import java.net.URL;
@@ -52,6 +54,9 @@ public class Board extends JPanel implements ActionListener {
 	public final int Blocksize=45;
 	public static int Screensizeh;  
 	public static int Screensizev;
+	Font bigfont = new Font("Serif", Font.PLAIN, 36);
+	Font mediumfont  = new Font("Serif", Font.PLAIN, 26);
+	Font smallfont = new Font("Serif", Font.PLAIN, 16);
 	public static double camx;
 	public static double camy;
     private static ArrayList<Star> stars;
@@ -59,7 +64,9 @@ public class Board extends JPanel implements ActionListener {
     private static ArrayList<Asteroid> asteroids;
     private static boolean ismenu;
     private double asteroidrotate;
-    
+    private boolean collider;
+    private String questtext;
+    private int points;
     
     // Main Menu Stuff
     // Play Button
@@ -88,7 +95,14 @@ public class Board extends JPanel implements ActionListener {
     
     // Escape menu stuff
     private static boolean isescmenu;
-    
+    public enum quests{
+    	Letter, Color, Coord;
+    }
+    private char lchar;
+    private int qx;
+    private int qy;
+    private String qcol;
+    private quests quest;
 	public Board(){
         Toolkit tk = Toolkit.getDefaultToolkit(); 
     	Screensizeh= ((int) tk.getScreenSize().getWidth());  
@@ -151,9 +165,15 @@ public class Board extends JPanel implements ActionListener {
         shipgun = new PartShipGun(100,100,2*Math.PI,shipbody);
         shipengine = new PartShipEngine(100,100,2*Math.PI,shipbody);
         shipcockpit = new PartShipCockpit(100,100,2*Math.PI,shipbody);
-        laser = new Laser(100,100,2*Math.PI,shipbody,shipgun);
+        laser = new Laser(100,100,shipbody,shipgun);
         reload = new ReloadText(800,100,laser);
         keyhandler = new Keyhandler(shipbody,laser);
+        questtext = "This is the first quest. Find a planet beginning with the letter b.";
+        quest = quests.Letter;
+        lchar='b';
+        qx=0;
+        qy=0;
+        qcol="Red";
         timer = new Timer(5, this);
         timer.start();
 	}
@@ -164,7 +184,7 @@ public class Board extends JPanel implements ActionListener {
     	String line;
     	try {
 			while ((line = br.readLine()) != null) { // try to read the line. if its not null, read the line and add 1 to the line number
-	        	planets.add(new Planet(Math.random()*25000, Math.random()*25000,line));
+	        	planets.add(new Planet(Math.random()*25000-25000, Math.random()*25000-25000,line));
 			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -179,7 +199,7 @@ public class Board extends JPanel implements ActionListener {
     }
     public void initAsteroids(){
         asteroids = new ArrayList<Asteroid>();
-        for (int i=0; i<10; i++ ) {
+        for (int i=0; i<70; i++ ) {
         	asteroids.add(new Asteroid(Math.random()*Screensizeh*10, Math.random()*Screensizev*10));
         }
     }
@@ -213,8 +233,12 @@ public void actionPerformed(ActionEvent e) {
 			        	Star a = stars.get(x);
 			        	a.move();
 					}
+					collisionchecker();
+					if (collider){
+						
+					}
 					asteroidrotate +=0.01;
-				}	else {
+				}else {
 					mouseticker();
 				}
 			} else {
@@ -298,11 +322,12 @@ public void paint(Graphics g){
         	Star a = stars.get(i);
         	g.drawImage(a.getImage(),(int)(a.getX()-camx),(int)(a.getY()-camy),this);
         }
-        for (int i=0; i<10; i++ ) {
+        for (int i=0; i<70; i++ ) {
         	Asteroid a = asteroids.get(i);
-    		g2d.rotate(asteroidrotate, a.getmidx()-camx, a.getmidy()-camy);
-    		g.drawImage(a.getImage(),(int)(a.getX()-camx),(int)(a.getY()-camy),this);
-    		g2d.rotate(-asteroidrotate, a.getmidx()-camx, a.getmidy()-camy);
+        	if (a.isVisible()){
+	    		g2d.rotate(asteroidrotate, a.getmidx()-camx, a.getmidy()-camy);
+	    		g.drawImage(a.getImage(),(int)(a.getX()-camx),(int)(a.getY()-camy),this);
+	    		g2d.rotate(-asteroidrotate, a.getmidx()-camx, a.getmidy()-camy);}
         }
         for (int i=0;i<planets.size();i++){
         	Planet a = planets.get(i);
@@ -331,6 +356,7 @@ public void paint(Graphics g){
         if (reload.getvisible())
         	g.drawImage(reload.getimage(), (int) reload.getX()-40,(int) reload.getY()+20, this);
         // Start of debug info
+        g2d.setFont(smallfont);
 		g2d.setColor(Color.WHITE);
         g2d.drawString("Dir: "+shipbody.getdir(), 5, 15);
         g2d.drawString("Heat: "+laser.getheat(), 5, 30);
@@ -339,20 +365,69 @@ public void paint(Graphics g){
         g2d.drawString("Ship Y Position: "+camy, 5, 75);
         g2d.drawString("Ship Speed: "+shipbody.getspeed(), 5, 90);
         g2d.drawString("Reloading?: "+laser.getreloading(), 5, 105);
+        g2d.drawString("Colliding?: "+collider, 5, 120);
         // end of gui
         // end of painting
         
 	}
+    Toolkit.getDefaultToolkit().sync();
+    g.dispose();
 }
 public void collisionchecker(){
-	Rectangle r1 = laser.getBounds();
-	Rectangle r2;
-	for (int i=1;i<10;i++){
-    	Asteroid a = asteroids.get(i);
-    	r2 = a.getBounds();
-    	if (r1.intersects(r2)){
-    		a.explode();
-    	}
+	Rectangle r1 = shipbody.getBounds();
+	Boolean collide;
+	collide = false;
+	for (int x=1;x<planets.size();x++){
+		Planet a = planets.get(x);
+		Rectangle r2 = a.getBounds();
+		if (r1.intersects(r2)){
+			collide =true;
+		}
+		if (collide){
+			if (quest == quests.Color){
+				if (qcol == "Red"){
+					if (a.getrandom() == 1 || a.getrandom() == 9){
+						points++;
+						newquest();
+					}
+				}
+				if (qcol == "Blue"){
+					if (a.getrandom() == 5){
+						points++;
+						newquest();
+					}
+				}
+				if (qcol == "Green"){
+					if (a.getrandom() == 2 || a.getrandom() == 6 || a.getrandom() == 7){
+						points++;
+						newquest();
+					}
+				}
+			} else if (quest == quests.Coord){
+				
+			} else if (quest == quests.Letter){
+				
+			}
+		}
+	}
+	collider = collide;
+	r1=laser.getBounds();
+	for (int x=1;x<asteroids.size();x++){
+		Rectangle r2 = asteroids.get(x).getBounds();
+		if (r1.intersects(r2)){
+			asteroids.get(x).explode();
+		}
+	}
+	
+}
+public void newquest(){
+	int random = (int)Math.random()*3+1;
+	if (random == 1){
+		quest = quests.Color;
+	} else if (random == 2){
+		quest = quests.Coord;
+	}else if (random == 3){
+		quest = quests.Letter;
 	}
 }
 
