@@ -13,15 +13,10 @@ import java.awt.event.KeyAdapter; // Get keyboard events
 import java.awt.event.KeyEvent; // Get keyboard info
 import java.awt.event.MouseEvent; // Get mouse events
 import java.awt.event.MouseListener; // Get mouse info
-import java.awt.geom.Line2D;
 import java.awt.MouseInfo;    // get mouse x and y
 import java.io.*;
-import java.net.URL;
-import javax.sound.sampled.*;
 import java.util.ArrayList;
-import java.applet.*; // for the sounds
 import java.awt.Rectangle;
-import javax.sound.sampled.AudioInputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -54,9 +49,9 @@ public class Board extends JPanel implements ActionListener {
 	public final int Blocksize=45;
 	public static int Screensizeh;  
 	public static int Screensizev;
-	Font bigfont = new Font("Serif", Font.PLAIN, 36);
-	Font mediumfont  = new Font("Serif", Font.PLAIN, 26);
-	Font smallfont = new Font("Serif", Font.PLAIN, 16);
+	Font bigfont = new Font("Haettenschweiler", Font.PLAIN, 36);
+	Font mediumfont  = new Font("Haettenschweiler", Font.PLAIN, 26);
+	Font smallfont = new Font("Haettenschweiler", Font.PLAIN, 16);
 	public static double camx;
 	public static double camy;
     private static ArrayList<Star> stars;
@@ -123,28 +118,28 @@ public class Board extends JPanel implements ActionListener {
 		
 		// load the exit button
 	    ImageIcon ebt = new ImageIcon(this.getClass().getResource(ebutstr));
-	    ebutimg = ebt.getImage(); // load the pipes in bottom left corner
+	    ebutimg = ebt.getImage(); 					// load the exit button
 	    ImageIcon ebti = new ImageIcon(this.getClass().getResource(ebutstrs));
-		ebutimgs = ebti.getImage(); // load the play button not selected
+		ebutimgs = ebti.getImage(); 				// load the exit button when hovered over
 		ebutheight=ebutimg.getHeight(null);
 		ebutwidth=ebutimg.getWidth(null);
 		ebuttx = Screensizeh/2-ebutwidth+100;
 		ebutty = Screensizev/2-ebutheight+100;
-		//load a big title screen image
+													//load a big title screen image
 	    ImageIcon mj = new ImageIcon(this.getClass().getResource(mm));
-		mi = mj.getImage(); // load the pipes in bottom left corner
+		mi = mj.getImage(); 						// load the pipes in bottom left corner
 		
 		
 		//game stuff
 	    ImageIcon heatimageicon = new ImageIcon(this.getClass().getResource(heatimagestring));
-		heatimage = heatimageicon.getImage(); // load the pipes in bottom left corner
+		heatimage = heatimageicon.getImage(); 			// load the Red bar in bottom left corner
 	    ImageIcon tlii = new ImageIcon(this.getClass().getResource(tls));
-		tli = tlii.getImage(); // load the pipes in the top left corner
+		tli = tlii.getImage(); 							// load the bar in the top right corner
 		heatimageheight=heatimage.getHeight(null);
 	    ImageIcon heatfillicon = new ImageIcon(this.getClass().getResource(heatfillstr));
-		heatfillimage = heatfillicon.getImage(); // load the pipes in bottom left corner
+		heatfillimage = heatfillicon.getImage(); 		// load the heat fill image in bottom left corner
 	    ImageIcon heatovericon = new ImageIcon(this.getClass().getResource(heatovrstr));
-		heatovrimage = heatovericon.getImage(); // load the pipe's overlay in bottom left corner
+		heatovrimage = heatovericon.getImage(); 		// load the heat's overlay in bottom left corner
 		heatovrheight=heatovrimage.getHeight(null);
 		setFocusable(true);
         setBackground(Color.BLACK);
@@ -168,9 +163,9 @@ public class Board extends JPanel implements ActionListener {
         laser = new Laser(100,100,shipbody,shipgun);
         reload = new ReloadText(800,100,laser);
         keyhandler = new Keyhandler(shipbody,laser);
-        questtext = "This is the first quest. Find a planet beginning with the letter b.";
+        questtext = "This is the first quest. Find a planet beginning with the letter a.";
         quest = quests.Letter;
-        lchar='b';
+        lchar='a';
         qx=0;
         qy=0;
         qcol="Red";
@@ -180,7 +175,7 @@ public class Board extends JPanel implements ActionListener {
     public void initPlanets() throws FileNotFoundException {
         planets = new ArrayList<Planet>();
     	BufferedReader br;
-			br = new BufferedReader(new FileReader("src/Star Names.txt"));
+			br = new BufferedReader(new FileReader("Star Names.txt"));
     	String line;
     	try {
 			while ((line = br.readLine()) != null) { // try to read the line. if its not null, read the line and add 1 to the line number
@@ -284,6 +279,7 @@ public static double getcx(){
 public static double getcy(){
 	return camy;	
 }
+@Override
 public void paint(Graphics g){
     super.paint(g);
     Graphics2D g2d = (Graphics2D)g;
@@ -338,13 +334,13 @@ public void paint(Graphics g){
 		g2d.rotate(shipbody.getdir(), shipbody.getmidx(), shipbody.getmidy());
 		g.drawImage(shipbody.getimage(), (int) shipbody.getX(),(int) shipbody.getY(), this);
 		g2d.rotate(-shipbody.getdir(), shipbody.getmidx(), shipbody.getmidy());
-		g2d.rotate(shipgun.getdir(),(int)  shipbody.getmidx(),(int)  shipbody.getmidy());
+		g2d.rotate(shipgun.getdir(),shipbody.getmidx(),shipbody.getmidy());
 		g.drawImage(shipgun.getimage(), (int) shipgun.getX(),(int) shipgun.getY(), this);
 		g.drawImage(shipengine.getimage(), (int) shipengine.getX(),(int) shipengine.getY(), this);
 		g.drawImage(shipcockpit.getimage(), (int) shipcockpit.getX(),(int) shipcockpit.getY(), this);
 		if (laser.isVisible())
 			g.drawImage(laser.getImage(), (int) laser.getX(),(int) laser.getY(),112,2000, this);
-		g2d.rotate(-shipgun.getdir(),(int)  shipbody.getmidx(),(int)  shipbody.getmidy());
+		g2d.rotate(-shipgun.getdir(),shipbody.getmidx(),shipbody.getmidy());
 		// End of game objects
 		
 		// Start of Gui ETC
@@ -356,16 +352,20 @@ public void paint(Graphics g){
         if (reload.getvisible())
         	g.drawImage(reload.getimage(), (int) reload.getX()-40,(int) reload.getY()+20, this);
         // Start of debug info
-        g2d.setFont(smallfont);
+        g2d.setFont(mediumfont);
 		g2d.setColor(Color.WHITE);
-        g2d.drawString("Dir: "+shipbody.getdir(), 5, 15);
-        g2d.drawString("Heat: "+laser.getheat(), 5, 30);
-        g2d.drawString("Reload Timer: "+laser.getreload(), 5, 45);
-        g2d.drawString("Ship X Position: "+camx, 5, 60);
-        g2d.drawString("Ship Y Position: "+camy, 5, 75);
-        g2d.drawString("Ship Speed: "+shipbody.getspeed(), 5, 90);
-        g2d.drawString("Reloading?: "+laser.getreloading(), 5, 105);
-        g2d.drawString("Colliding?: "+collider, 5, 120);
+        g2d.drawString("Dir: "+shipbody.getdir(), 5, 20);
+        g2d.drawString("Heat: "+laser.getheat(), 5, 40);
+        g2d.drawString("Reload Timer: "+laser.getreload(), 5, 60);
+        g2d.drawString("Ship X Position: "+camx, 5, 80);
+        g2d.drawString("Ship Y Position: "+-camy, 5, 100);
+        g2d.drawString("Ship Speed: "+shipbody.getspeed(), 5, 120);
+        g2d.drawString("Reloading?: "+laser.getreloading(), 5, 140);
+        g2d.drawString("Colliding?: "+collider, 5, 160);
+        g2d.setFont(bigfont);
+        g2d.drawString("Points: "+points, 5, 195);
+        g2d.setFont(mediumfont);
+        g2d.drawString("Quest Text: "+questtext, 5, 230);
         // end of gui
         // end of painting
         
@@ -385,8 +385,6 @@ public void collisionchecker(){
 		Rectangle r2 = a.getBounds();
 		if (r1.intersects(r2)){
 			collide =true;
-		}
-		if (collide){
 			if (quest == quests.Color){
 				if (qcol == "Red"){
 					if (a.getrandom() == 1 || a.getrandom() == 9){
@@ -407,13 +405,16 @@ public void collisionchecker(){
 					}
 				}
 			} else if (quest == quests.Letter){
-				if (a.getrandom() == 1 || a.getrandom() == 9){
+				char bqb = a.getname().toLowerCase().charAt(0);
+				if (bqb==lchar){
 					points++;
 					newquest();
 				}
 			}
 		}
 	}
+
+	
 	collider = collide;
 	r1=laser.getBounds();
 	for (int x=1;x<asteroids.size();x++){
@@ -422,16 +423,45 @@ public void collisionchecker(){
 			asteroids.get(x).explode();
 		}
 	}
+	if (quest == quests.Coord){
+		if (camx < 420+ qx && camx > qx -420 && camy < -qy+420 && camy > -qy -420 ){
+			points++;
+			newquest();
+		}
+	}
 	
 }
 public void newquest(){
-	int random = (int)Math.random()*3+1;
+	int random = (int)(Math.random()*3)+1;
 	if (random == 1){
 		quest = quests.Color;
+		random = (int)(Math.random()*3)+1;
+		if (random == 1){
+			qcol = "Red";
+		} else if (random == 2){
+			qcol = "Blue";
+		}else if (random == 3){
+			qcol = "Green";
+		}
+		questtext = "Your new mission is to find a "+ qcol.toLowerCase() + " planet. Good luck!";
 	} else if (random == 2){
+		int randomx = (int)(Math.random()*10000)-5000;
+		int randomy = (int)(Math.random()*10000)-5000;
 		quest = quests.Coord;
+		qx=randomx;
+		qy=randomy;
+		questtext = "Your new mission is to go to the coordinates X: "+ qx + " , Y: " + qy + " . Good luck!";
 	}else if (random == 3){
 		quest = quests.Letter;
+		random = (int)(Math.random()*3)+1;
+		if (random == 1){
+			lchar = 'a';
+		} else if (random == 2){
+			lchar = 'd';
+		}else if (random == 3){
+			lchar = 'm';
+		}
+		questtext = "Your new mission is to find a planet with a name beginning with the letter '"+ lchar + "'. Good luck!";
 	}
 }
 
@@ -503,11 +533,13 @@ public static void escpress(){
 
 private class TAdapter extends KeyAdapter {
 
-    public void keyReleased(KeyEvent e) {
+    @Override
+	public void keyReleased(KeyEvent e) {
     	keyhandler.keyReleased(e);
     }
 
-    public void keyPressed(KeyEvent e) {
+    @Override
+	public void keyPressed(KeyEvent e) {
     	keyhandler.keyPressed(e);
     }
 }

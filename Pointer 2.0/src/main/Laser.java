@@ -54,8 +54,9 @@ public void stary(double yadd){
 public void move(){
 	x=gun.getmidx()-(width/2)-10;
 	y=gun.getmidy()-100;
-	if (visible)
+	if (visible){
 		heat+=4;
+		playSound("Laser Shot.wav");}
 	if (heat > 1000){
 		reload=true;
 		reloadcounter=1;
@@ -105,4 +106,19 @@ public Image getImage() {
 }
 public Rectangle getBounds() {
     return new Rectangle((int)x,(int)y, width, 2000);
-}}
+}
+public static synchronized void playSound(final String url) {
+    try {
+      Clip clip = AudioSystem.getClip();
+      AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+      Main.class.getResourceAsStream("../" + url));
+      clip.open(inputStream);
+      FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+     gainControl.setValue(-20.0f); // Reduce volume by 40 decibels.
+     if (!clip.isRunning())
+    	 clip.start();
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
+    }
+}
+}

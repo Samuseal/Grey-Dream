@@ -1,2 +1,2 @@
-cd bin
+cd src
 jar.jar
