@@ -24,6 +24,22 @@ public class Board extends JPanel implements ActionListener {
 	/**
 	 * 
 	 */
+	// Game over screen - has to go first :D
+    private static int gbuttx;
+	private static int gbutty;
+	private static int gbutheight;
+	private static int gbutwidth;
+    private String gbutstrs = "../GO.png";//The button's image selected
+    private Image gbutimg;
+    
+    private static int g2buttx;
+	private static int g2butty;
+	private static int g2butheight;
+	private static int g2butwidth;
+    private String g2butstrs = "../GO2.png";//The button's image selected
+    private Image g2butimg;
+    
+    
 	private static final long serialVersionUID = -8692123294390921211L;
 	private Timer timer;
     private String heatimagestring = "../Heatimage.png";//The Pipes in the bottom left corner
@@ -38,7 +54,7 @@ public class Board extends JPanel implements ActionListener {
     private int heatovrheight;
 	public static boolean INV_Screen_Shown;
 	public Keyhandler keyhandler;
-	public PartShipBody shipbody;
+	public static PartShipBody shipbody;
 	public static PartShipGun shipgun;
 	public static PartShipCockpit shipcockpit;
 	public static PartShipEngine shipengine;
@@ -62,6 +78,7 @@ public class Board extends JPanel implements ActionListener {
     private boolean collider;
     private String questtext;
     private int points;
+    private static boolean debugtext;
     
     // Main Menu Stuff
     // Play Button
@@ -77,8 +94,33 @@ public class Board extends JPanel implements ActionListener {
     // Exit button
     private String ebutstrs = "../MenuMainExitButtonSelect.png";//The button's image selected
     private String ebutstr = "../MenuMainExitButtonUp.png";//The button's image selected
+    private String cbus = "../Controls Button down.png";//The button's image selected
+    private String cbds = "../Controls Button up.png";//The button's image selected
+    private Image cbub;
+    private Image cbdb;
+    private static boolean controlscreen;
+    private static int cbuttx;
+	private static int cbutty;
+	private static int cbutheight;
+	private static int cbutwidth;
+	private static boolean cbutispressed;
+    private String cobus = "../Contineb.png";//The button's image selected
+    private String cobds = "../Continebu.png";//The button's image selected
+    private Image cobub;
+    private Image cobdb;
+    private static int cobuttx;
+	private static int cobutty;
+	private static int cobutheight;
+	private static int cobutwidth;
+	private Image eai;
+	private String eas = "../eArt.png";
+	private int eax,eay,eahx,eahy;
+	private static boolean cobutispressed;
     private Image ebutimg;
     private Image ebutimgs;
+    private String cs = "../Controls.png";
+    private Image ci;
+    private int chx,chy,cx,cy;
     private static int ebuttx;
 	private static int ebutty;
 	private static int ebutheight;
@@ -102,6 +144,22 @@ public class Board extends JPanel implements ActionListener {
         Toolkit tk = Toolkit.getDefaultToolkit(); 
     	Screensizeh= ((int) tk.getScreenSize().getWidth());  
     	Screensizev = ((int) tk.getScreenSize().getHeight());
+    	// load the controls
+    	ImageIcon cii = new ImageIcon(this.getClass().getResource(cs));
+    	ci = cii.getImage();
+    	chx = ci.getWidth(null);
+    	chy = ci.getHeight(null);
+    	cx = (Screensizeh/2)-chx+200;
+    	cy = (Screensizev/2)-chy+200;
+    	
+    	
+    	ImageIcon eaii = new ImageIcon(this.getClass().getResource(eas));
+    	eai = eaii.getImage();
+    	eahx = eai.getHeight(null);
+    	eahy = eai.getWidth(null);
+    	eax = (Screensizeh/2)-eahx+500;
+    	eay = (Screensizev/2)-eahy+500;
+    	
     	
 		// load the main menu
     	
@@ -116,6 +174,26 @@ public class Board extends JPanel implements ActionListener {
 		pbutty = Screensizev/2-pbutheight;
 		ismenu=true;
 		
+		// load the controls button
+	    ImageIcon cbt = new ImageIcon(this.getClass().getResource(cbus));
+	    cbdb = cbt.getImage(); 					// load the exit button
+	    ImageIcon cbti = new ImageIcon(this.getClass().getResource(cbds));
+		cbub = cbti.getImage(); 				// load the exit button when hovered over
+		cbutheight=cbdb.getHeight(null);
+		cbutwidth=cbdb.getWidth(null);
+		cbuttx = Screensizeh/2-cbutwidth+100;
+		cbutty = Screensizev/2-cbutheight+100;
+		
+		// load the continue button
+	    ImageIcon cobt = new ImageIcon(this.getClass().getResource(cobus));
+	    cobdb = cobt.getImage(); 					// load the exit button
+	    ImageIcon cobti = new ImageIcon(this.getClass().getResource(cobds));
+		cobub = cobti.getImage(); 				// load the exit button when hovered over
+		cobutheight=cobdb.getHeight(null);
+		cobutwidth=cobdb.getWidth(null);
+		cobuttx = Screensizeh/2-cobutwidth+100;
+		cobutty = Screensizev/2-cobutheight+300;
+		
 		// load the exit button
 	    ImageIcon ebt = new ImageIcon(this.getClass().getResource(ebutstr));
 	    ebutimg = ebt.getImage(); 					// load the exit button
@@ -124,11 +202,25 @@ public class Board extends JPanel implements ActionListener {
 		ebutheight=ebutimg.getHeight(null);
 		ebutwidth=ebutimg.getWidth(null);
 		ebuttx = Screensizeh/2-ebutwidth+100;
-		ebutty = Screensizev/2-ebutheight+100;
+		ebutty = Screensizev/2-ebutheight+200;
 													//load a big title screen image
 	    ImageIcon mj = new ImageIcon(this.getClass().getResource(mm));
 		mi = mj.getImage(); 						// load the pipes in bottom left corner
 		
+		// load the game over screen
+	    ImageIcon gbt = new ImageIcon(this.getClass().getResource(gbutstrs));
+	    gbutimg = gbt.getImage(); 					// load the game over graphic
+		gbutheight=gbutimg.getHeight(null);
+		gbutwidth=gbutimg.getWidth(null);
+		gbuttx = Screensizeh/2-gbutwidth+300;
+		gbutty = Screensizev/2-gbutheight+100;
+		
+	    ImageIcon g2bt = new ImageIcon(this.getClass().getResource(g2butstrs));
+	    g2butimg = g2bt.getImage(); 					// load the click anywhere to continue
+		g2butheight=g2butimg.getHeight(null);
+		g2butwidth=g2butimg.getWidth(null);
+		g2buttx = Screensizeh/2-g2butwidth+300;
+		g2butty = Screensizev/2-g2butheight-100;
 		
 		//game stuff
 	    ImageIcon heatimageicon = new ImageIcon(this.getClass().getResource(heatimagestring));
@@ -292,11 +384,16 @@ public void paint(Graphics g){
 			g.drawLine(0,Blocksize*x,Screensizeh,Blocksize*x);
 	}
 	else if (isescmenu){
+		g.drawImage(eai,eax,eay,this);
 		if (ebutispressed){
-			g.drawImage(ebutimgs, ebuttx, ebutty, this);
+			g.drawImage(ebutimgs, ebuttx, ebutty+100, this);
 		} else {
-			g.drawImage(ebutimg, ebuttx, ebutty, this);
+			g.drawImage(ebutimg, ebuttx, ebutty+100, this);
 		}
+	}
+	else if (!shipbody.getvisible()){
+		g.drawImage(gbutimg, gbuttx, gbutty, null);
+		g.drawImage(g2butimg, g2buttx, g2butty+400, null);
 	}
 	else if (ismenu) {
         setBackground(Color.BLACK);
@@ -305,12 +402,25 @@ public void paint(Graphics g){
 		} else {
 			g.drawImage(pbutimg, pbuttx, pbutty, this);
 		}
+		if (cbutispressed){
+			g.drawImage(cbdb, cbuttx, cbutty, this);
+		} else {
+			g.drawImage(cbub, cbuttx, cbutty, this);
+		}
 		if (ebutispressed){
 			g.drawImage(ebutimgs, ebuttx, ebutty, this);
 		} else {
 			g.drawImage(ebutimg, ebuttx, ebutty, this);
 		}
 		g.drawImage(mi, 400,180, this);
+	}
+	else if (controlscreen){
+		g2d.drawImage(ci, cx, cy, this);
+		if (cobutispressed){
+			g.drawImage(cobub, cobuttx, cobutty, this);
+		} else {
+			g.drawImage(cobdb, cobuttx, cobutty, this);
+		}
 	}
 	else{
         setBackground(Color.BLACK);
@@ -331,16 +441,17 @@ public void paint(Graphics g){
     		g2d.setColor(Color.WHITE);
         	g2d.drawString("Name: "+a.getname(),(int)(a.getX()-camx),(int)(a.getY()-camy));
         }
-		g2d.rotate(shipbody.getdir(), shipbody.getmidx(), shipbody.getmidy());
-		g.drawImage(shipbody.getimage(), (int) shipbody.getX(),(int) shipbody.getY(), this);
-		g2d.rotate(-shipbody.getdir(), shipbody.getmidx(), shipbody.getmidy());
-		g2d.rotate(shipgun.getdir(),shipbody.getmidx(),shipbody.getmidy());
-		g.drawImage(shipgun.getimage(), (int) shipgun.getX(),(int) shipgun.getY(), this);
-		g.drawImage(shipengine.getimage(), (int) shipengine.getX(),(int) shipengine.getY(), this);
-		g.drawImage(shipcockpit.getimage(), (int) shipcockpit.getX(),(int) shipcockpit.getY(), this);
-		if (laser.isVisible())
-			g.drawImage(laser.getImage(), (int) laser.getX(),(int) laser.getY(),112,2000, this);
-		g2d.rotate(-shipgun.getdir(),shipbody.getmidx(),shipbody.getmidy());
+        if (shipbody.getvisible()){
+			g2d.rotate(shipbody.getdir(), shipbody.getmidx(), shipbody.getmidy());
+			g.drawImage(shipbody.getimage(), (int) shipbody.getX(),(int) shipbody.getY(), this);
+			g2d.rotate(-shipbody.getdir(), shipbody.getmidx(), shipbody.getmidy());
+			g2d.rotate(shipgun.getdir(),shipbody.getmidx(),shipbody.getmidy());
+			g.drawImage(shipgun.getimage(), (int) shipgun.getX(),(int) shipgun.getY(), this);
+			g.drawImage(shipengine.getimage(), (int) shipengine.getX(),(int) shipengine.getY(), this);
+			g.drawImage(shipcockpit.getimage(), (int) shipcockpit.getX(),(int) shipcockpit.getY(), this);
+			if (laser.isVisible())
+				g.drawImage(laser.getImage(), (int) laser.getX(),(int) laser.getY(),112,2000, this);
+			g2d.rotate(-shipgun.getdir(),shipbody.getmidx(),shipbody.getmidy());}
 		// End of game objects
 		
 		// Start of Gui ETC
@@ -354,14 +465,17 @@ public void paint(Graphics g){
         // Start of debug info
         g2d.setFont(mediumfont);
 		g2d.setColor(Color.WHITE);
-        g2d.drawString("Dir: "+shipbody.getdir(), 5, 20);
-        g2d.drawString("Heat: "+laser.getheat(), 5, 40);
-        g2d.drawString("Reload Timer: "+laser.getreload(), 5, 60);
-        g2d.drawString("Ship X Position: "+camx, 5, 80);
-        g2d.drawString("Ship Y Position: "+-camy, 5, 100);
-        g2d.drawString("Ship Speed: "+shipbody.getspeed(), 5, 120);
-        g2d.drawString("Reloading?: "+laser.getreloading(), 5, 140);
-        g2d.drawString("Colliding?: "+collider, 5, 160);
+        g2d.drawString("Ship X Position: "+Math.round(camx), 5, 20);
+        g2d.drawString("Ship Y Position: "+Math.round(-camy), 5, 40);
+        g2d.drawString("Ship Speed: "+Math.round(shipbody.getspeed()), 5, 60);
+        if (debugtext){
+        	g2d.setColor(Color.RED);
+        	g2d.drawString("(DEBUG) Ship Direction: " +shipbody.getdir() , 5, 80);
+        	g2d.drawString("(DEBUG) Ship Heat: " +laser.getheat() , 5, 100);
+        	g2d.drawString("(DEBUG) Reload Timer: " +laser.getreload() , 5, 120);
+        	g2d.drawString("(DEBUG) Quest Type: " +quest , 5, 140);
+        	g2d.setColor(Color.WHITE);
+        }
         g2d.setFont(bigfont);
         g2d.drawString("Points: "+points, 5, 195);
         g2d.setFont(mediumfont);
@@ -416,11 +530,11 @@ public void collisionchecker(){
 
 	
 	collider = collide;
-	r1=laser.getBounds();
+	r1=shipbody.getBounds();
 	for (int x=1;x<asteroids.size();x++){
 		Rectangle r2 = asteroids.get(x).getBounds();
 		if (r1.intersects(r2)){
-			asteroids.get(x).explode();
+			shipbody.setvisible(false);
 		}
 	}
 	if (quest == quests.Coord){
@@ -464,9 +578,39 @@ public void newquest(){
 		questtext = "Your new mission is to find a planet with a name beginning with the letter '"+ lchar + "'. Good luck!";
 	}
 }
-
+public static void dbpr() {
+	// TODO Auto-generated method stub
+	debugtext = !debugtext;
+}
 public static void mousepressed(){
-	if (isescmenu){
+	if (!shipbody.getvisible()){
+		shipbody.setvisible(true);
+		ismenu = true;
+	}
+	else if (controlscreen){
+		PointerInfo r = MouseInfo.getPointerInfo();
+        int mouseY = r.getLocation().y;
+        int mouseX = r.getLocation().x;  
+        if (mouseX<cobuttx+cobutwidth && mouseX>cobuttx &&
+        		mouseY<cobutty+cobutheight && mouseY>cobutty){
+        	controlscreen = !controlscreen;
+        	ismenu = true;
+        } else {
+        	// do nothing - yet
+        }
+	}
+	else if (isescmenu){
+		PointerInfo r = MouseInfo.getPointerInfo();
+        int mouseY = r.getLocation().y;
+        int mouseX = r.getLocation().x;  
+        if (mouseX<ebuttx+ebutwidth && mouseX>ebuttx &&
+        		mouseY<ebutty+100+ebutheight && mouseY>ebutty+100){
+        	System.exit(0);
+        } else {
+        	// do nothing - yet
+        }
+	}
+	else if (ismenu){
 		PointerInfo r = MouseInfo.getPointerInfo();
         int mouseY = r.getLocation().y;
         int mouseX = r.getLocation().x;  
@@ -476,14 +620,10 @@ public static void mousepressed(){
         } else {
         	// do nothing - yet
         }
-	}
-	if (ismenu){
-		PointerInfo r = MouseInfo.getPointerInfo();
-        int mouseY = r.getLocation().y;
-        int mouseX = r.getLocation().x;  
-        if (mouseX<ebuttx+ebutwidth && mouseX>ebuttx &&
-        		mouseY<ebutty+ebutheight && mouseY>ebutty){
-        	System.exit(0);
+        if (mouseX<cbuttx+cbutwidth && mouseX>cbuttx &&
+        		mouseY<cbutty+cbutheight && mouseY>cbutty){
+        	controlscreen = !controlscreen;
+        	ismenu = false;
         } else {
         	// do nothing - yet
         }
@@ -501,13 +641,13 @@ public void mouseticker(){
         int mouseY = r.getLocation().y;
         int mouseX = r.getLocation().x;  
         if (mouseX<ebuttx+ebutwidth && mouseX>ebuttx &&
-        		mouseY<ebutty+ebutheight && mouseY>ebutty){
+        		mouseY<ebutty+100+ebutheight && mouseY>ebutty+100){
         	pbutispressed = true;
         } else {
         	pbutispressed = false;
         }
 	}
-	else if (ismenu){
+	if (ismenu){
 		PointerInfo r = MouseInfo.getPointerInfo(); // Checks if mouse is over a button
         int mouseY = r.getLocation().y;
         int mouseX = r.getLocation().x;  
@@ -524,6 +664,13 @@ public void mouseticker(){
         	ebutispressed = true;
         } else {
         	ebutispressed = false;
+        }
+        // Check Controls Button
+        if (mouseX<cbuttx+cbutwidth && mouseX>cbuttx &&
+        		mouseY<cbutty+cbutheight && mouseY>cbutty){
+        	cbutispressed = true;
+        } else {
+        	cbutispressed = false;
         }
 	}
 }

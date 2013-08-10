@@ -18,11 +18,12 @@ public class PartShipBody {
     private boolean moving;
     private boolean thrusting;
     private double speed;
+    private boolean visible;
     private final int maxspeed = 8;
-    private int randomsmoke;
     public PartShipBody(int x, int y, double direction) {
         ImageIcon ii = new ImageIcon(this.getClass().getResource(craft1));
-    	image = ii.getImage();    
+    	image = ii.getImage();   
+    	visible = true;
         width = image.getWidth(null);
         height = image.getHeight(null);
         this.x = x;
@@ -70,8 +71,6 @@ public class PartShipBody {
     public Rectangle getBounds() {
         return new Rectangle((int) x,(int) y, width, height);
     }
-    public void setVisible(Boolean visible) {
-    }
     public void leftpressed()
     {
     	leftpressed=true;
@@ -112,4 +111,11 @@ public class PartShipBody {
     public boolean getthrusting(){
     	return thrusting;
     }
+	public void setvisible(boolean a) {
+		// TODO Auto-generated method stub
+		visible = a;
+	}
+	public boolean getvisible(){
+		return visible;
+	}
 }

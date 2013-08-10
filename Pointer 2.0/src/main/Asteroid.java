@@ -51,6 +51,6 @@ public Image getImage() {
 }
 
 public Rectangle getBounds() {
-    return new Rectangle((int)x,(int)y, width, height);
+    return new Rectangle((int)x-(int)Board.camx,(int)y-(int)Board.camy, width, height);
 }
 }

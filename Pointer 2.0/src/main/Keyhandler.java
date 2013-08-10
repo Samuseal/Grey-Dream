@@ -46,6 +46,9 @@ public class Keyhandler {
         if (key == KeyEvent.VK_I) {
         	Board.invbutrel();
         }
+        if (key == KeyEvent.VK_F3) {
+        	Board.dbpr();
+        }
         if (key == KeyEvent.VK_P) {
         	if (Board.getpause())
         		Board.setpause(false);
