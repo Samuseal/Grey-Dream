@@ -248,6 +248,9 @@ public static boolean getpause(){
 public static void setpause(Boolean as){
 	paused = as; 
 }
+public static boolean getescmenu(){
+	return isescmenu;
+}
 public static void invbutrel(){
 	INV_Screen_Shown = !INV_Screen_Shown;
 }
