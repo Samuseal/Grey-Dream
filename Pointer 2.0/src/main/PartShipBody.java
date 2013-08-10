@@ -5,6 +5,8 @@ import java.awt.Rectangle;
 
 import javax.swing.ImageIcon;
 
+import main.sound.SoundHandler;
+
 public class PartShipBody {
     private String craft1 = "../Ship Body.png";
     private double x;
@@ -79,6 +81,7 @@ public class PartShipBody {
     public void uppressed()
     {
     	thrusting=true;
+    	SoundHandler.playSoundEngine("Engine Sound.wav");
     }
     public void upreleased()
     {
